@@ -1,33 +1,37 @@
+#include <Servo.h>
 #include "WiFiS3.h"
 #include "secrets.h"
 
-constexpr char WIFI_NAME[]{SECRET_WIFI_NAME};
-constexpr char WIFI_PW[]{SECRET_WIFI_PW};
+constexpr char WIFI_NAME[]{ SECRET_WIFI_NAME };
+constexpr char WIFI_PW[]{ SECRET_WIFI_PW };
 
-constexpr int SERVER_PORT{80};
-WiFiServer server(SERVER_PORT);
+constexpr int PORT{80};
+WiFiServer server(PORT);
 
-constexpr pin_size_t GATE_PIN{3};
-constexpr pin_size_t GARAGE_PIN{8};
-constexpr int ON_TIME{500}; // Duration gate/garage remote is on when activated
+Servo servo{};
+constexpr pin_size_t SIGNAL_PIN{13};
+constexpr int REST_ANGLE{90};
+constexpr int GATE_ANGLE{REST_ANGLE + 45}; // Angle needed to press gate remote
+constexpr int GARAGE_ANGLE{REST_ANGLE - 45}; // Angle needed to press garage remote
+constexpr int PRESS_DURATION{250};
 
 void setup() {
   Serial.begin(9600);
 
-  pinMode(GATE_PIN, OUTPUT);
-  pinMode(GARAGE_PIN, OUTPUT);
+  servo.attach(SIGNAL_PIN);
+  servo.write(REST_ANGLE);
 
   startServer();
 }
 
 void loop() {
-  WiFiClient client{server.available()};
+  WiFiClient client{ server.available() };
 
   if (client) {
     Serial.println("Client connected");
     Serial.println();
 
-    String request{""};
+    String request{ "" };
 
     while (client.connected()) {
       if (client.available()) {
@@ -47,11 +51,11 @@ void loop() {
     }
 
     if (request.startsWith("GET /gate ")) {
-      powerOnThenOff(GATE_PIN, ON_TIME);
+      press(GATE_ANGLE);
     }
 
     if (request.startsWith("GET /garage ")) {
-      powerOnThenOff(GARAGE_PIN, ON_TIME);
+      press(GARAGE_ANGLE);
     }
 
     client.stop();
@@ -68,7 +72,7 @@ void startServer() {
       ;
   }
 
-  int status{WL_IDLE_STATUS};
+  int status{ WL_IDLE_STATUS };
 
   while (status != WL_CONNECTED) {
     Serial.print("Connecting to ");
@@ -97,8 +101,8 @@ void startServer() {
   Serial.println();
 }
 
-void powerOnThenOff(pin_size_t pin, int onTime) {
-  digitalWrite(pin, HIGH);
-  delay(onTime);
-  digitalWrite(pin, LOW);
+void press(int angle) {
+  servo.write(angle);
+  delay(PRESS_DURATION);
+  servo.write(REST_ANGLE);
 }
