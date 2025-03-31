@@ -9,11 +9,11 @@ constexpr int PORT{80};
 WiFiServer server(PORT);
 
 Servo servo{};
-constexpr pin_size_t SIGNAL_PIN{13};
-constexpr int REST_ANGLE{90};
-constexpr int GATE_ANGLE{REST_ANGLE + 45}; // Angle needed to press gate remote
-constexpr int GARAGE_ANGLE{REST_ANGLE - 45}; // Angle needed to press garage remote
-constexpr int PRESS_DURATION{250};
+constexpr pin_size_t SIGNAL_PIN{12};
+constexpr int REST_ANGLE{83};
+constexpr int GATE_ANGLE{REST_ANGLE + 35}; // Angle needed to press gate remote
+constexpr int GARAGE_ANGLE{REST_ANGLE - 49}; // Angle needed to press garage remote
+constexpr int PRESS_DURATION{200};
 
 void setup() {
   Serial.begin(9600);
