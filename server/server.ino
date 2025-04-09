@@ -1,5 +1,5 @@
 #include "Arduino_LED_Matrix.h"
-#include "wifiAnimation.h"
+#include "animations.h"
 #include "WiFiS3.h"
 #include "secrets.h"
 #include <Servo.h>
@@ -21,8 +21,6 @@ constexpr int PRESS_DURATION{200};
 
 void setup() {
   Serial.begin(9600);
-
-  led_matrix.loadSequence(wifiAnimation);
   led_matrix.begin();
 
   servo.attach(SIGNAL_PIN);
@@ -37,6 +35,10 @@ void loop() {
   if (client) {
     Serial.println("Client connected");
     Serial.println();
+    
+    // Play request animation once
+    led_matrix.loadSequence(requestAnimation);
+    led_matrix.play(false);
 
     String request{""};
 
@@ -69,11 +71,16 @@ void loop() {
 
     Serial.println("Client disconnected");
     Serial.println();
+
+    // Allow time for request animation to complete before clearing LED matrix
+    delay(500);
+    led_matrix.loadFrame(CLEAR);
   }
 }
 
 void startServer() {
   // Loop WiFi animation
+  led_matrix.loadSequence(wifiAnimation);
   led_matrix.play(true);
 
   if (WiFi.status() == WL_NO_MODULE) {
@@ -110,7 +117,12 @@ void startServer() {
   Serial.println(WiFi.localIP());
   Serial.println();
 
-  // Stop WiFi animation
+  // Play tick animation once
+  led_matrix.loadSequence(tickAnimation);
+  led_matrix.play(false);
+  delay(1500);
+
+  // Stop WiFi animation loop
   led_matrix.loadFrame(CLEAR);
 }
 
