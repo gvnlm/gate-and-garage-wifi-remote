@@ -1,10 +1,9 @@
-#include <Servo.h>
 #include "WiFiS3.h"
 #include "secrets.h"
+#include <Servo.h>
 
-constexpr char WIFI_NAME[]{ SECRET_WIFI_NAME };
-constexpr char WIFI_PW[]{ SECRET_WIFI_PW };
-
+constexpr char WIFI_NAME[]{SECRET_WIFI_NAME};
+constexpr char WIFI_PW[]{SECRET_WIFI_PW};
 constexpr int PORT{80};
 WiFiServer server(PORT);
 
@@ -25,13 +24,13 @@ void setup() {
 }
 
 void loop() {
-  WiFiClient client{ server.available() };
+  WiFiClient client{server.available()};
 
   if (client) {
     Serial.println("Client connected");
     Serial.println();
 
-    String request{ "" };
+    String request{""};
 
     while (client.connected()) {
       if (client.available()) {
@@ -72,7 +71,7 @@ void startServer() {
       ;
   }
 
-  int status{ WL_IDLE_STATUS };
+  int status{WL_IDLE_STATUS};
 
   while (status != WL_CONNECTED) {
     Serial.print("Connecting to ");
