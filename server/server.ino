@@ -1,6 +1,11 @@
+#include "Arduino_LED_Matrix.h"
+#include "wifiAnimation.h"
 #include "WiFiS3.h"
 #include "secrets.h"
 #include <Servo.h>
+
+ArduinoLEDMatrix led_matrix{};
+constexpr uint32_t CLEAR[] = {0, 0, 0}; // Empty frame to clear the LED matrix
 
 constexpr char WIFI_NAME[]{SECRET_WIFI_NAME};
 constexpr char WIFI_PW[]{SECRET_WIFI_PW};
@@ -16,6 +21,9 @@ constexpr int PRESS_DURATION{200};
 
 void setup() {
   Serial.begin(9600);
+
+  led_matrix.loadSequence(wifiAnimation);
+  led_matrix.begin();
 
   servo.attach(SIGNAL_PIN);
   servo.write(REST_ANGLE);
@@ -65,6 +73,9 @@ void loop() {
 }
 
 void startServer() {
+  // Loop WiFi animation
+  led_matrix.play(true);
+
   if (WiFi.status() == WL_NO_MODULE) {
     Serial.println("ERROR: No WiFi module found");
     while (true)
@@ -98,6 +109,9 @@ void startServer() {
   Serial.print("Server running at http://");
   Serial.println(WiFi.localIP());
   Serial.println();
+
+  // Stop WiFi animation
+  led_matrix.loadFrame(CLEAR);
 }
 
 void press(int angle) {
