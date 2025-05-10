@@ -53,6 +53,7 @@ void loop() {
 
         // Respond to request
         client.println("HTTP/1.0 204 No Content");
+        client.println("Access-Control-Allow-Origin: *");
         client.println();
 
         break;
