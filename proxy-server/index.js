@@ -2,11 +2,13 @@ require('dotenv').config();
 const ARDUINO_IP = process.env.ARDUINO_IP;
 
 const express = require('express');
+const cors = require('cors');
 const morgan = require('morgan');
 const { exec } = require('child_process');
 
 const app = express();
 
+app.use(cors());
 app.use(morgan('tiny'));
 
 // Uses `curl` to send HTTP requests to the local Arduino server since axios, fetch, and got all
