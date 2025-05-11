@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const WIFI_IP = import.meta.env.VITE_WIFI_IP;
-const BASE_URL = `http://${WIFI_IP}`;
+const PROXY_SERVER_IP = import.meta.env.VITE_PROXY_SERVER_IP;
+const PROXY_SERVER_PORT = import.meta.env.VITE_PROXY_SERVER_PORT;
+const BASE_URL = `http://${PROXY_SERVER_IP}:${PROXY_SERVER_PORT}`;
 
 const openGate = async () => {
   try {
@@ -9,8 +10,10 @@ const openGate = async () => {
   } catch (error) {
     if (error.code === 'ERR_NETWORK') {
       console.log(
-        `Failed to open gate: Arduino server could not be reached. Ensure it is running and the request is to the correct IP.`
+        `Failed to open gate: Proxy server could not be reached. Ensure it is running and the request is to the correct IP.`
       );
+    } else if (error.status === 503) {
+      console.log('Failed to open gate: Proxy server could not reach Arduino server');
     } else {
       console.log('Failed to open gate:', error);
     }
@@ -23,10 +26,12 @@ const openGarage = async () => {
   } catch (error) {
     if (error.code === 'ERR_NETWORK') {
       console.log(
-        `Failed to open gate: Arduino server could not be reached. Ensure it is running and the request is to the correct IP.`
+        `Failed to open garage: Proxy server could not be reached. Ensure it is running and the request is to the correct IP.`
       );
+    } else if (error.status === 503) {
+      console.log('Failed to open garage: Proxy server could not reach Arduino server');
     } else {
-      console.log('Failed to open gate:', error);
+      console.log('Failed to open garage:', error);
     }
   }
 };
