@@ -3,3 +3,4 @@ This project leverages an Arduino (UNO R4 WiFi), a servo motor (MG996R), Tailsca
 
 
 # How it works
+<img src="./docs/open-gate-workflow.svg" width="1000"/>
