@@ -7,17 +7,19 @@
 ArduinoLEDMatrix led_matrix{};
 constexpr uint32_t CLEAR[] = {0, 0, 0}; // Empty frame to clear the LED matrix
 
+// Ensure the following Wi-Fi credentials have been filled out in secrets.h
 constexpr char WIFI_NAME[]{SECRET_WIFI_NAME};
 constexpr char WIFI_PW[]{SECRET_WIFI_PW};
+
 constexpr int PORT{80};
 WiFiServer server(PORT);
 
 Servo servo{};
-constexpr pin_size_t SIGNAL_PIN{12};
-constexpr int REST_ANGLE{83};
-constexpr int GATE_ANGLE{REST_ANGLE + 35}; // Angle needed to press gate remote
-constexpr int GARAGE_ANGLE{REST_ANGLE - 49}; // Angle needed to press garage remote
-constexpr int PRESS_DURATION{200};
+constexpr pin_size_t SIGNAL_PIN{12}; // For controlling servo motor
+constexpr int REST_ANGLE{83}; // Resting angle of servo motor's arm
+constexpr int GATE_ANGLE{REST_ANGLE + 35}; // Angle of servo motor's arm needed to press gate remote
+constexpr int GARAGE_ANGLE{REST_ANGLE - 49}; // Angle of servo motor's arm needed to press garage remote
+constexpr int PRESS_DURATION{200}; // Duration before servo motor's arm is returned to its rest angle
 
 void setup() {
   Serial.begin(9600);
@@ -43,6 +45,7 @@ void loop() {
     String request{""};
 
     while (client.connected()) {
+      // Read request
       if (client.available()) {
         request += static_cast<char>(client.read());
       }
@@ -127,6 +130,7 @@ void startServer() {
   led_matrix.loadFrame(CLEAR);
 }
 
+// Rotates the servo motor's arm by the given angle
 void press(int angle) {
   servo.write(angle);
   delay(PRESS_DURATION);
